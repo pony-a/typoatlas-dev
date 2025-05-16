@@ -25,7 +25,11 @@ onMounted(async () => {
             const y = parseInt(result[3]);
             const tileQuadKey = tileXYToQuadKey(x, y, z);
             matched_img = imgData.filter(imgObj => imgObj.quadKey.startsWith(tileQuadKey)).map(imgObj => imgObj.url);
-            console.log(matched_img);
+
+            if (matched_img.length == 0) {
+                matched_img.push('blank.png');
+                console.log(matched_img);
+            }
         }
         const t = await fetch(matched_img[0]);
         if (t.status == 200) {
@@ -69,8 +73,8 @@ onMounted(async () => {
             'type': 'raster',
             'tiles': ['custom://{z}/{x}/{y}'],
             'tileSize': 128,
-            'minzoom': currentZoom + 2,
-            'maxzoom': currentZoom + 2,
+            'minzoom': 0 /*currentZoom + 2*/,
+            'maxzoom': 24/*currentZoom + 2*/,
         });
         map.addLayer({
             id: 'gallery',
@@ -93,7 +97,7 @@ onMounted(async () => {
                 'line-color': '#888',
                 'line-width': 1
             }
-        });
+        }, 'gallery');
         map.addLayer({
             'id': 'tile-pane',
             'type': 'fill',
@@ -165,12 +169,14 @@ onMounted(async () => {
         };
 
         map.on('move', () => updateTileGrid(map));
+        /*
         map.on('zoom', () => {
+
             const zoom = Math.round(map.getZoom());
-
+ 
             if (zoom !== currentZoom) {
-
-
+ 
+ 
                 map.removeLayer('gallery');
                 map.removeSource('gallery');
                 map.addSource('gallery', {
@@ -188,7 +194,7 @@ onMounted(async () => {
                 updateTileGrid(map);
                 currentZoom = zoom;
             }
-        });
+        });*/
         updateTileGrid(map);
 
         map.on('click', 'tile-pane', (e: any) => {
