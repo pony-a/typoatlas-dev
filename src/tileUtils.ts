@@ -30,3 +30,10 @@ export function tileXYToQuadKey(x: number, y: number, z: number): string {
     }
     return quadKey;
 }
+
+export function longLatToQuadKey(lon: number, lat: number): string {
+    const zoom = 24; // Adjust zoom level as needed (higher zoom for more detailed tiles)
+    const tileX = long2tile(lon, zoom);
+    const tileY = lat2tile(lat, zoom);
+    return tileXYToQuadKey(tileX, tileY, zoom);
+}
